@@ -1,18 +1,30 @@
 package epi;
+
 import epi.test_framework.EpiTest;
 import epi.test_framework.GenericTest;
+
 public class PrimitiveDivide {
+
   @EpiTest(testDataFile = "primitive_divide.tsv")
   public static int divide(int x, int y) {
-    // TODO - you fill in here.
-    return 0;
+    int quotient = 0;
+    int power = 64;
+    while (x >= y) {
+      while ((y << power) > y) {
+        --power;
+      }
+      x -= y << power;
+      quotient += 1 << power;
+    }
+    return quotient;
   }
 
   public static void main(String[] args) {
     System.exit(
         GenericTest
             .runFromAnnotations(args, "PrimitiveDivide.java",
-                                new Object() {}.getClass().getEnclosingClass())
+                new Object() {
+                }.getClass().getEnclosingClass())
             .ordinal());
   }
 }
