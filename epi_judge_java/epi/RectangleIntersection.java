@@ -1,10 +1,14 @@
 package epi;
+
 import epi.test_framework.EpiTest;
 import epi.test_framework.EpiUserType;
 import epi.test_framework.GenericTest;
+
 public class RectangleIntersection {
+
   @EpiUserType(ctorParams = {int.class, int.class, int.class, int.class})
   public static class Rectangle {
+
     int x, y, width, height;
 
     public Rectangle(int x, int y, int width, int height) {
@@ -23,7 +27,7 @@ public class RectangleIntersection {
         return false;
       }
 
-      Rectangle rectangle = (Rectangle)o;
+      Rectangle rectangle = (Rectangle) o;
 
       if (x != rectangle.x) {
         return false;
@@ -51,17 +55,28 @@ public class RectangleIntersection {
       return "[" + x + ", " + y + ", " + width + ", " + height + "]";
     }
   }
+
   @EpiTest(testDataFile = "rectangle_intersection.tsv")
   public static Rectangle intersectRectangle(Rectangle R1, Rectangle R2) {
-    // TODO - you fill in here.
-    return new Rectangle(0, 0, 0, 0);
+    if (!isIntersect(R1, R2)) {
+      return new Rectangle(0, 0, -1, -1);
+    }
+    return new Rectangle(Math.max(R1.x, R2.x), Math.max(R1.y, R2.y),
+        Math.min(R1.x + R1.width, R2.x + R2.width) - Math.max(R1.x, R2.x),
+        Math.min(R1.y + R1.height, R2.y + R2.height) - Math.max(R1.y, R2.y));
+  }
+
+  public static boolean isIntersect(Rectangle R1, Rectangle R2) {
+    return (R1.x <= R2.x + R2.width) && (R2.x <= R1.x + R1.width) &&
+        (R1.y <= R2.y + R2.height) && (R2.y <= R1.y + R1.height);
   }
 
   public static void main(String[] args) {
     System.exit(
         GenericTest
             .runFromAnnotations(args, "RectangleIntersection.java",
-                                new Object() {}.getClass().getEnclosingClass())
+                new Object() {
+                }.getClass().getEnclosingClass())
             .ordinal());
   }
 }
