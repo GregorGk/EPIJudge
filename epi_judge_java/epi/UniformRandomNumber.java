@@ -1,24 +1,34 @@
 package epi;
+
 import epi.test_framework.EpiTest;
-import epi.test_framework.RandomSequenceChecker;
 import epi.test_framework.GenericTest;
-import epi.test_framework.TestFailure;
+import epi.test_framework.RandomSequenceChecker;
 import epi.test_framework.TimedExecutor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
 public class UniformRandomNumber {
+
   private static int zeroOneRandom() {
     Random gen = new Random();
     return gen.nextInt(2);
   }
 
   public static int uniformRandom(int lowerBound, int upperBound) {
-    // TODO - you fill in here.
-    return 0;
+    int numberOfOutcomes = upperBound - lowerBound + 1, result;
+    do {
+      result = 0;
+      for (int i = numberOfOutcomes; i != 0; i >>>= 1) {
+        result <<= 1;
+        result |= zeroOneRandom();
+      }
+    } while (result >= numberOfOutcomes);
+    return lowerBound + result;
   }
+
   private static boolean uniformRandomRunner(TimedExecutor executor,
-                                             int lowerBound, int upperBound)
+      int lowerBound, int upperBound)
       throws Exception {
     List<Integer> results = new ArrayList<>();
 
@@ -38,7 +48,7 @@ public class UniformRandomNumber {
 
   @EpiTest(testDataFile = "uniform_random_number.tsv")
   public static void uniformRandomWrapper(TimedExecutor executor,
-                                          int lowerBound, int upperBound)
+      int lowerBound, int upperBound)
       throws Exception {
     RandomSequenceChecker.runFuncWithRetries(
         () -> uniformRandomRunner(executor, lowerBound, upperBound));
@@ -48,7 +58,8 @@ public class UniformRandomNumber {
     System.exit(
         GenericTest
             .runFromAnnotations(args, "UniformRandomNumber.java",
-                                new Object() {}.getClass().getEnclosingClass())
+                new Object() {
+                }.getClass().getEnclosingClass())
             .ordinal());
   }
 }
