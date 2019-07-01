@@ -2,17 +2,31 @@ package epi;
 import epi.test_framework.EpiTest;
 import epi.test_framework.RandomSequenceChecker;
 import epi.test_framework.GenericTest;
-import epi.test_framework.TestFailure;
 import epi.test_framework.TimedExecutor;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
+
 public class RandomSubset {
 
   // Returns a random k-sized subset of {0, 1, ..., n - 1}.
   public static List<Integer> randomSubset(int n, int k) {
-    // TODO - you fill in here.
-    return Collections.emptyList();
+    var result = new ArrayList<Integer>(k);
+    HashMap<Integer, Integer> changedElements = new HashMap<>();
+    Random randomIndexGenerator = new Random();
+    for (int i = 0; i < k; ++i) {
+      int randomIndex = i + randomIndexGenerator.nextInt(n - i);
+      int valueForI = changedElements.getOrDefault(randomIndex, randomIndex);
+      int valueForRandomIndex = changedElements.getOrDefault(i, i);
+      changedElements.put(i, valueForI);
+      changedElements.put(randomIndex, valueForRandomIndex);
+    }
+    for (int i = 0; i < k; ++i) {
+      result.add(changedElements.get(i));
+    }
+    return result;
   }
   private static boolean randomSubsetRunner(TimedExecutor executor, int n,
                                             int k) throws Exception {
