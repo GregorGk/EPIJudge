@@ -1,21 +1,35 @@
 package epi;
+
 import epi.test_framework.EpiTest;
 import epi.test_framework.RandomSequenceChecker;
 import epi.test_framework.GenericTest;
 import epi.test_framework.TestFailure;
 import epi.test_framework.TimedExecutor;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.stream.Collectors;
+
 public class NonuniformRandomNumber {
 
   public static int
   nonuniformRandomNumberGeneration(List<Integer> values,
-                                   List<Double> probabilities) {
-    // TODO - you fill in here.
-    return 0;
+      List<Double> probabilities) {
+    var prefixSumOfProbabilities = new ArrayList<Double>();
+    for (double p : probabilities) {
+      double lastSum = (prefixSumOfProbabilities.isEmpty() ? 0.0
+          : prefixSumOfProbabilities.get(prefixSumOfProbabilities.size() - 1));
+      prefixSumOfProbabilities.add(lastSum + p);
+    }
+    Random random = new Random();
+    double uniform01 = random.nextDouble();
+    int insertionIndex = Collections.binarySearch(prefixSumOfProbabilities, uniform01);
+    return (insertionIndex < 0)? values.get(-insertionIndex - 1) : values.get(insertionIndex);
   }
+
   private static boolean nonuniformRandomNumberGenerationRunner(
       TimedExecutor executor, List<Integer> values, List<Double> probabilities)
       throws Exception {
@@ -53,14 +67,15 @@ public class NonuniformRandomNumber {
     RandomSequenceChecker.runFuncWithRetries(
         ()
             -> nonuniformRandomNumberGenerationRunner(executor, values,
-                                                      probabilities));
+            probabilities));
   }
 
   public static void main(String[] args) {
     System.exit(
         GenericTest
             .runFromAnnotations(args, "NonuniformRandomNumber.java",
-                                new Object() {}.getClass().getEnclosingClass())
+                new Object() {
+                }.getClass().getEnclosingClass())
             .ordinal());
   }
 }
